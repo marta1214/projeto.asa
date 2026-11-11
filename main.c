@@ -2,42 +2,39 @@
 #include <stdlib.h>
 
 typedef struct {
-    int x;
-    int y;
-    int z;
-    int rank;
-    int prev;
+    int x, y, z;
+    int rank, prev;
 } Bloco;
 
 typedef struct {
     int h_max;
-    int ind;
+    int index ;
 } Node;
 
 int min(int a, int b) {
-    if (a<b) {
-        return a;
-    }
+    if (a<b) return a;
     return b;
 }
 
 int max(int a, int b) {
-    if (a>b) {
-        return a;
-    }
+    if (a>b) return a;
     return b;
 }
 
-int compara_blocos(const void *ba, const void *bb) {
-    const Bloco *b1= (const Bloco*) ba;
-    const Bloco *b2= (const Bloco*) bb;
-    return (b1->x<b2->x)-(b1->x>b2->x);
+int comparaBlocos(const void *bloco1, const void *bloco2) {
+    /*
+    A função recebe 2 blocos e retorna -1 se x do bloco1 for menor que o do
+    bloco2, e 1 se for maior. Se forem iguais, retorna 0.
+    */
+    const Bloco *b1 = (const Bloco*) bloco1;
+    const Bloco *b2 = (const Bloco*) bloco2;
+    return (b1->x < b2->x) - (b1->x > b2->x);
 }
 
 int compara_y(const void *pa, const void *pb) {
-    int y1=*(const int *)pa;
-    int y2=*(const int *)pb;
-    return (y1<y2)-(y1>y2);
+    int y1 = *(const int *) pa;
+    int y2 = *(const int *) pb;
+    return (y1 < y2) - (y1 > y2);
 }
 int *lst_y_nrep(Bloco *lst, int len, int *len_lista) {
     int i=0;
@@ -79,7 +76,7 @@ void atualiza(Node *arvore, int len, int i, Node novo) {
     while (i<len+1) {
         if (novo.h_max>arvore[i].h_max) {
             arvore[i].h_max=novo.h_max;
-            arvore[i].ind=novo.ind;
+            arvore[i].index = novo.index;
         }
         i+= i & -i;
     }
@@ -87,7 +84,7 @@ void atualiza(Node *arvore, int len, int i, Node novo) {
 Node consulta(Node* arvore, int p) {
     Node melhor;
     melhor.h_max=0;
-    melhor.ind=-1;    
+    melhor.index=-1;    
     while (p>0) {
         if (arvore[p].h_max>=melhor.h_max) {
             melhor=arvore[p];
@@ -109,7 +106,7 @@ void construir_torre(Bloco *lst, int len, int *n_rep_y, int len_lista) {
     }
     for (i=0; i<len_lista+1;i++) {
         arvore[i].h_max=0;
-        arvore[i].ind=-1;
+        arvore[i].index=-1;
     }
     i=0;
     while (i<len) {
@@ -121,7 +118,7 @@ void construir_torre(Bloco *lst, int len, int *n_rep_y, int len_lista) {
         while (k<fim) {
             melhor=consulta(arvore,lst[k].rank-1);
             h_max[k]=lst[k].z+melhor.h_max;
-            lst[k].prev=melhor.ind;
+            lst[k].prev=melhor.index;
             if (h_max[k]>melhor_h_max) {
                 melhor_h_max=h_max[k];
                 topo=k;
@@ -131,7 +128,7 @@ void construir_torre(Bloco *lst, int len, int *n_rep_y, int len_lista) {
         k=i;
         while (k<fim) {
             novo.h_max=h_max[k];
-            novo.ind=k;
+            novo.index=k;
             atualiza(arvore, len_lista, lst[k].rank, novo);
             k++;
         }
@@ -189,7 +186,7 @@ int main() {
         lst[i+2]=b3;
 
     }
-    qsort(lst,len,sizeof(Bloco),compara_blocos);
+    qsort(lst,len,sizeof(Bloco),comparaBlocos);
     n_rep_y=lst_y_nrep(lst, len, &len_lista);
     construir_torre(lst,len,n_rep_y,len_lista);
     free(lst);
