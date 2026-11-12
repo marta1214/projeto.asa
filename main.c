@@ -8,7 +8,7 @@ typedef struct {
 
 typedef struct {
     int h_max;
-    int index ;
+    int index;
 } Node;
 
 int min(int a, int b) {
@@ -72,27 +72,41 @@ int *lstYNotRepeated(Bloco *lst, int len, int *len_lst) {
     return not_repeated;
 }
 
-int encontra_rank(int y, int *n_rep_y, int len_lista) {
+int encontra_rank(int y, int *not_repeated, int len_lista) {
+    /*
+    A função recebe um valor de y, uma lista de valores únicos de y e o
+    comprimento da lista. Retorn -1 se o valor de y não estiver na lista, ou o
+    índice do valor de y na lista.
+    */
     int ini = 0, end = len_lista - 1;
     while (ini <= end) {
         int i = (ini + end)/2;
-        if (n_rep_y[i] == y) return i;
-        if (n_rep_y[i] > y) ini = i + 1;
+        if (not_repeated[i] == y) return i;
+        if (not_repeated[i] > y) ini = i + 1;
         else end = i - 1;
     }
     return -1;
 }
 
 void atualiza(Node *arvore, int len, int i, Node novo) {
-    while (i < len+1) {
+    /*
+    A função recebe uma árvore, o comprimento da árvore, um índice e um novo nó.
+    Atualiza a árvore com o novo nó, se o valor de h_max do novo nó for maior
+    que o valor de h_max do nó atual na árvore.
+    */
+    while (i < len + 1) {
         if (novo.h_max > arvore[i].h_max) {
             arvore[i].h_max = novo.h_max;
             arvore[i].index = novo.index;
         }
-        i += i & -i;
+        i += i & -i; // vai buscar o pai do nó atual
     }
 }
 Node consulta(Node* arvore, int p) {
+    /*
+    Esta função recebe uma árvore e um índice, e retorna o nó com o maior valor
+    de h_max na árvore até o índice p.
+    */
     Node melhor;
     melhor.h_max = 0;
     melhor.index = -1;    
@@ -100,7 +114,7 @@ Node consulta(Node* arvore, int p) {
         if (arvore[p].h_max >= melhor.h_max) {
             melhor = arvore[p];
         }
-        p -= p & -p;
+        p -= p & -p; // vai buscar o primeiro bit = 1 e passa a 0, ou seja, vai buscar o pai do nó atual
     }
     return melhor;
 }
@@ -199,7 +213,7 @@ int main() {
     qsort(lst, len, sizeof(Bloco), comparaBlocos);
     n_rep_y = lstYNotRepeated(lst, len, &len_lista);
     construir_torre(lst, len, n_rep_y, len_lista);
-    
+
     free(lst);
     free(n_rep_y);
     return 0;
