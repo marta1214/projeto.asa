@@ -119,6 +119,13 @@ Node consulta(Node* arvore, int p) {
     return melhor;
 }
 void construir_torre(Bloco *lst, int len, int *n_rep_y, int len_lista) {
+    /*
+    A função recebe uma lista de blocos, o comprimento da lista, uma lista de
+    valores únicos de y e o comprimento da lista de valores únicos de y. Constrói
+    a torre de blocos com a maior altura possível, imprimindo a altura máxima e
+    a quantidade de blocos na torre, seguida das dimensões de cada bloco na
+    ordem em que foram empilhados.
+    */
     int i, m = 1, k = 0, fim, topo = -1;
     int melhor_h_max = 0;
     Node melhor;
